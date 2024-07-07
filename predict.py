@@ -1,25 +1,26 @@
 # Prediction interface for Cog ⚙️
 # https://cog.run/python
-
-import requests
-import subprocess
-
+import os
+from transformers import AutoModel, AutoTokenizer, HqqConfig
 from cog import BasePredictor, Input, Path
 
 
 class Predictor(BasePredictor):
+
     def setup(self) -> None:
         """Load the model into memory to make running multiple predictions efficient"""
-        # self.model = torch.load("./weights.pth")
-        subprocess.Popen(["/llama.cpp/llama-server", "-m", "/models/gpt2.Q8_0.gguf", "-c", "2048"])
+        self.device = 'cuda'
+        quant_config = HqqConfig(nbits=8, group_size=64, quant_zero=False, quant_scale=False,
+                                 axis=0)
+        model_name = 'openai-community/gpt2'
+        self.model = AutoModel.from_pretrained(model_name, devicer_map=self.device, quantization_config=quant_config)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     def predict(
             self,
             prompt: str = "Let's describe how to write an website in 10 steps."
     ) -> str:
-        url = 'http://localhost:8080/completion'
-        headers = {"Content-Type": "application/json"}
-        data = {"prompt": prompt, "n_predict": 128}
-        req = requests.post(url, headers=headers, data=data)
-
-        return req.text
+        tokens = self.tokenizer.encode(prompt, return_tensors='pt').to(self.device)
+        pred = self.model(tokens)[0]
+        answer = self.tokenizer.decode(pred, skip_special_tokens=True)
+        return answer

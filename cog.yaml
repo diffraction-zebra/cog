@@ -2,20 +2,12 @@
 # Reference: https://cog.run/yaml
 
 build:
-  gpu: false
+  gpu: true
   system_packages:
-    - git
-    - make
-    - gcc
-    - g++
-    - ccache
-    - wget
+    # - wget
   python_version: "3.10"
   python_packages:
-    - huggingface_hub[cli]
-  run:
-    - git clone https://github.com/ggerganov/llama.cpp.git /llama.cpp
-    - make -C /llama.cpp -j 8
-    - mkdir /models
-    - wget "https://huggingface.co/igorbkz/gpt2-Q8_0-GGUF/resolve/main/gpt2.Q8_0.gguf?download=true" -O /models/gpt2.Q8_0.gguf
+    - transformers
+    - accelerate
+    - hqq
 predict: "predict.py:Predictor"
