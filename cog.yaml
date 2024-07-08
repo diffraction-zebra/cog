@@ -7,4 +7,5 @@ build:
   python_packages:
     - transformers
     - accelerate
+    - bitsandbytes
 predict: "predict.py:Predictor"
