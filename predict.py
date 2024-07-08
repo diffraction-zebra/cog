@@ -13,7 +13,7 @@ class Predictor(BasePredictor):
         """Load the model into memory to make running multiple predictions efficient"""
         self.device = 'cuda'
         model_path = pathlib.Path('model')
-        self.model = AutoModel.from_pretrained(model_path, devicer_map=self.device)
+        self.model = AutoModel.from_pretrained(model_path, device_map=self.device)
         self.tokenizer = AutoTokenizer.from_pretrained(model_path)
 
     def predict(
