@@ -3,11 +3,8 @@
 
 build:
   gpu: true
-  system_packages:
-    # - wget
   python_version: "3.10"
   python_packages:
     - transformers
     - accelerate
-    - hqq
 predict: "predict.py:Predictor"
